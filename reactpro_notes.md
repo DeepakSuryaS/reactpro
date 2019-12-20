@@ -1,3 +1,46 @@
+## React Paradigms:
+  * The first is unidirectional data flow. 
+    * State flows in one direction down the tree of your application's components, from the stateful parent component to child components. The child components only receive the state data they need. 
+  * The second is that complex stateful apps can be broken down into just a few, or maybe a single, stateful component. The rest of your components simply receive state from the parent as props, and render a UI from that state. 
+  It begins to create a separation where state management is handled in one part of code and UI rendering in another.
+  This principle of separating state logic from UI logic is one of React's key principles.
+  When it's used correctly, it makes the design of complex, stateful applications much easier to manage.
+  
+### Lifecycle Methods:
+  * React components have several special methods that provide opportunities to perform actions at specific points in the lifecycle of a component.
+  * These are called lifecycle methods, or lifecycle hooks, and allow you to catch components at certain points in time.
+  * This can be before they are rendered, before they update, before they receive props, before they unmount, and so on.
+  * List of lifecycle methods:
+    * componentWillMount() - will be deprecated in a future version of 16.X and removed in version 17.
+    
+    * componentDidMount()
+      * Most web developers, at some point, need to call an API endpoint to retrieve data.
+      * If you're working with React, it's important to know where to perform this action.
+      * The best practice with React is to place API calls or any calls to your server in the lifecycle method componentDidMount().
+      * This method is called after a component is mounted to the DOM.
+      * Any calls to setState() here will trigger a re-rendering of your component.
+      * When you call an API in this method, and set your state with the data that the API returns, it will automatically trigger an update once you receive the data.
+      * This is also the best place to attach any event listeners you need to add for specific functionality.
+      * React provides a synthetic event system which wraps the native event system present in browsers.
+      * This means that the synthetic event system behaves exactly the same regardless of the user's browser - even if the native events may behave differently between different browsers.
+      * Example of synthetic event listeners: onClick, onChange, etc.
+    
+    * shouldComponentUpdate()
+      * If any component receives new state or new props, it re-renders itself and all its children. 
+      * This is usually okay.
+      * But React provides a lifecycle method you can call when child components receive new state or props, and declare specifically if the components should update or not. 
+      * The method is shouldComponentUpdate(), and it takes nextProps and nextState as parameters.
+      * This method is a useful way to optimize performance. 
+      * For example, the default behavior is that your component re-renders when it receives new props, even if the props haven't changed. You can use shouldComponentUpdate() to prevent this by comparing the props. 
+      * The method must return a boolean value that tells React whether or not to update the component. 
+      * You can compare the current props (this.props) to the next props (nextProps) to determine if you need to update or not, and return true or false accordingly.
+    
+    * componentDidUpdate()
+    
+    * componentWillUnmount()
+
+
+
 ### React.Fragment
 * When trying to wrap everything a function returns in a single element such as a <div>, because react has this requirement, the markup actually becomes flooded with <div>s. It ends up polluting the DOM tree. 
 * React fragments helps us wrap the elements that we're returning in something tha doesn't end up creating a new node(element) in the DOM tree.
@@ -156,3 +199,72 @@
     * useHistory
     * useLocation
     * useParams
+
+
+
+## Redux
+
+  * Redux is a predictable state container for JavaScript apps.
+  * It helps you write applications that behave consistently, run in different environments (client, server, and native), and are easy to test.
+  * State management tool created before React's context API was stabilized.
+  * Redux was born as a system to manage global app state before React released a stable version context API.
+  * Under the hood, Redux uses the context API to power it's own system.
+  * Great way to learn philosophies of pure functions and global state management without side effects.
+  
+  * Redux is a state management framework that can be used with a number of different web technologies, including React.
+  * In Redux, there is a single state object that's responsible for the entire state of your application. This means if you had a React app with ten components, and each component had its own local state, the entire state of your app would be defined by a single state object housed in the Redux store. This is the first important principle to understand when learning Redux: the Redux store is the single source of truth when it comes to application state.
+  * This also means that any time any piece of your app wants to update state, it must do so through the Redux store. The unidirectional data flow makes it easier to track state management in your app.
+
+  #### Pure function:
+    1. If the function is called with the same parameters over and over again, it will return the same result. This function can't rely on some outside object or source that may change from one call to the next.
+    2. It will make no alterations or mutations outside of itself. This means that nothing else should be modified as a result of calling the function.
+
+  ##### Examples of states:
+    * State coming from an API
+    * State that indicates a loading status for a component
+    * State that is managing form etc
+  
+  #### Guiding principles:
+    * Single source of truth (global state)
+    * State is read-only (actions)
+    * Any changes to state will happen with pure functions that we call reducers
+
+  #### Fundamentals:
+    * Actions & action creators -> description of the change that we want to make to the lower state
+      * action is an object with a type property who's value is a string describing the change that you want to make that's it and there's an optional property often called payload or data
+    * Dispatch -> vehicle for taking the action to the reducer
+    * Reducers -> pure functions, use the action to determine the new state
+    * Store - attaches the following functions to the reducer: subscribe(), getState(), dispatch(), replaceReducer()
+      * subscribe() -> takes a function, allows us to perform any action after a change is made to the store
+      * getState() -> quick way to get the current state of our application's data
+      * dispatch() -> sends the action to the reducer, therefore, expects an action as a parameter
+
+    The job of the reducer as a pure function is to take the previous version of the state and an action and return a brand new value for the state based on the action. Since it is a pure function, it must return a new version of the state without modifying the old version of the state.
+    
+    So the process is, first we create an action or an action creator and dispatch it to the redux store. After an action is created and dispatched, the Redux store needs to know how to respond to that action. This is the job of a reducer function. Reducers in Redux are responsible for the state modifications that take place in response to actions. A reducer takes state and action as arguments, and it always returns a new state. It is important to see that this is the only role of the reducer. It has no side effects — it never calls an API endpoint and it never has any hidden surprises. The reducer is simply a pure function that takes state and action, then returns new state.
+    Another key principle in Redux is that state is read-only. In other words, the reducer function must always return a new copy of state and never modify state directly. Redux does not enforce state immutability, however, you are responsible for enforcing it in the code of your reducer functions. You'll practice this in later challenges.
+
+  ##### Restaurant analogy:
+    * our order -> action
+    * waiter/server -> dispatch
+    * chef -> reducer
+
+  ##### Combining Reducers:
+    * import the separate reducers
+    * combine the reducers into a single state tree
+    * create the store
+    * export the store
+
+  ### React redux:
+  * React Redux provides a small API with two key features: Provider and connect. Another challenge covers connect. The Provider is a wrapper component from React Redux that wraps your React app. This wrapper then allows you to access the Redux store and dispatch functions throughout your component tree. Provider takes two props, the Redux store and the child components of your app. 
+  * The Provider component allows you to provide state and dispatch to your React components, but you must specify exactly what state and actions you want. This way, you make sure that each component only has access to the state it needs. You accomplish this by creating two functions: mapStateToProps() and mapDispatchToProps().
+  
+  #### connect():
+    Pulls together the store and our component.
+    * Higher-order component
+    * takes two parameters:
+      * what parts of the global state does this component want access to?
+      * what actions do you want to be able to dispatch from this component?
+    * returns a function to which we pass the component we want to connect. When called, this function creates a new component wrapping ours which passes the global state and "dispatchable" actions to our component via props.
+    * syntax:
+      ```connect(mapStateToPropsFunc, mapDispatchToProps)(Component)```
